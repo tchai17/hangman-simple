@@ -1,4 +1,8 @@
-// This Hangman game initializes 
+// This Hangman game randomly chooses a word from a list of pre-set words. 
+// User is expected to input a single letter, which the program will verify if the letter is present in the chosen word.
+// If the letter is present, the user can continue guessing, otherwise the user is penalized.
+// The game ends when the user guesses all letters of the word successively (win), or if the user runs out of guesses (lose)
+// @author timothy.chai
 
 import java.util.ArrayList;
 import java.util.Scanner;
