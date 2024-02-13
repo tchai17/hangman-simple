@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Hangman {
@@ -28,13 +29,11 @@ public class Hangman {
 		// Selecting a word using a random number
 		int selectedIndex = (int) (Math.random()*(wordList.length));
 		String selectedWord = wordList[selectedIndex].toUpperCase();
-		System.out.println(selectedWord);
 		
 		
 		// Creating a display word that is shown 
 		String dash = "-";
 		String displayWord = dash.repeat(selectedWord.length());
-		//System.out.println(displayWord);
 		
 		// Initializing number of guesses
 		int guesses = 8;
@@ -42,10 +41,11 @@ public class Hangman {
 		// Print welcome message
 		System.out.println("Welcome to Hangman!");
 		
-		//String letterToCheck = new String("a");
 		// Prompt user to input letter
 		Scanner scanner = new Scanner(System.in);
 		
+		// Initialize ArrayList to store past guesses
+		ArrayList<String> pastGuesses = new ArrayList<String>();
 		
 		while ( guesses > 0 ){ 
 			
@@ -58,11 +58,30 @@ public class Hangman {
 			else
 				System.out.println("You have " + guesses + " guesses left.");
 
-			// Prompt the user to enter a string
+			// Prompt the user to enter a letter
 	        System.out.print("Your guess: ");
 	        String inputLetter = scanner.nextLine();
-	       
-			
+	        
+	        // Check if user inputs non-alphabet 
+	        if ( inputLetter.matches("[a-zA-Z]+") == false)
+	        	break;
+	        
+	        // Convert input into uppercase
+	        inputLetter = inputLetter.toUpperCase();
+	        
+	        // If input contains more than one character, use first character
+	        if ( inputLetter.length() > 1) 
+	        	inputLetter = inputLetter.substring(0, 1);
+	        	       
+			// Check if guess is repeated from before, else add to list of past guesses
+	        if ( pastGuesses.contains(inputLetter)) {
+	        	System.out.println("You have previously guessed " + inputLetter + ", please try again.");
+	        	continue;
+	        }
+	        else {
+	        	pastGuesses.add(inputLetter);
+	        }
+	        
 			// Use letterCheck method to loop through letters
 			String newDisplayWord = letterCheck(displayWord, selectedWord, inputLetter);
 		
@@ -73,8 +92,8 @@ public class Hangman {
 				displayWord = newDisplayWord;
 			}
 			else {
-			// If display word did not change, deduct guesses
-				guesses = guesses - 1;
+				// If display word did not change, deduct guesses
+				guesses--;
 				System.out.println("There are no " + inputLetter + "'s in the word.");
 			}
 			
@@ -88,9 +107,8 @@ public class Hangman {
 		
 		// If word has no more dashes, means word is guessed, then show victory messages
 		if ( displayWord.contains("-") == false) {
-			System.out.print("That guess is correct.");
-			System.out.print("You guessed the word: " + displayWord);
-			
+			System.out.println("You guessed the word: " + displayWord);
+			System.out.println("You win.");
 		}
 		// else, display defeat message:
 		else {
