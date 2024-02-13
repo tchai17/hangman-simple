@@ -1,5 +1,7 @@
-
+/build/
 /src/main
+.project
 .settings/*
 *.txt
+.classpath
 Untitled*
