@@ -1,3 +1,5 @@
+// This Hangman game initializes 
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -22,18 +24,30 @@ public class Hangman {
 	}
 	
 	
+	// Method for checking user input
+	public static String getInputLetter(Scanner scanner) {
+		System.out.print("Your guess: ");
+        String inputLetter = scanner.nextLine().toUpperCase();
+        if (inputLetter.matches("[A-Z]+")) {
+            return inputLetter;
+        } else {
+        	// If input is not a letter, then throw exception
+            System.out.println("Invalid input. Please enter a single letter.");
+            throw new IllegalArgumentException("Non-alphabet input");
+        }
+	}
+	
 	public static void main(String[] args) {
 		// Initializing array of words (string)
 		String[] wordList = { "PANCAKE", "UMBRELLA", "MUSICAL", "SAXOPHONE", "GIRAFFE", "UNIVERSE" };
 		
 		// Selecting a word using a random number
 		int selectedIndex = (int) (Math.random()*(wordList.length));
-		String selectedWord = wordList[selectedIndex].toUpperCase();
+		String selectedWord = wordList[selectedIndex];
 		
 		
 		// Creating a display word that is shown 
-		String dash = "-";
-		String displayWord = dash.repeat(selectedWord.length());
+		String displayWord = "-".repeat(selectedWord.length());
 		
 		// Initializing number of guesses
 		int guesses = 8;
@@ -57,17 +71,9 @@ public class Hangman {
 				System.out.println("You only have one guess left.");
 			else
 				System.out.println("You have " + guesses + " guesses left.");
-
-			// Prompt the user to enter a letter
-	        System.out.print("Your guess: ");
-	        String inputLetter = scanner.nextLine();
-	        
-	        // Check if user inputs non-alphabet 
-	        if ( inputLetter.matches("[a-zA-Z]+") == false)
-	        	break;
-	        
-	        // Convert input into uppercase
-	        inputLetter = inputLetter.toUpperCase();
+			
+			// Get user input and pass it through error-checking
+			String inputLetter = getInputLetter(scanner);
 	        
 	        // If input contains more than one character, use first character
 	        if ( inputLetter.length() > 1) 
@@ -116,8 +122,5 @@ public class Hangman {
 			System.out.print("The word was: " + selectedWord);
 			
 		}
-					
-
 	}
-
 }
