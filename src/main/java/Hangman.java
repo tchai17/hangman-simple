@@ -10,13 +10,12 @@ import java.util.Scanner;
 public class Hangman {
 
 	// Method to replace letter in string with target index
-	public static String replaceLetter(String inputString, String inputLetter, int index) {
+	private static String replaceLetter(String inputString, String inputLetter, int index) {
 	    return inputString.substring(0, index) + inputLetter + inputString.substring(index+1);
 	}
 	
 	// Method to check if letter exists in selected word, then amend display word 
-	public static String letterCheck( String displayWord, String selectedWord, String letterToCheck ) {
-		
+	private static String letterCheck( String displayWord, String selectedWord, String letterToCheck ) {
 		// Split the selected word into array of letters
 		String[] selectedWordArray = selectedWord.split("");
 		for ( int i=0; i < selectedWordArray.length; i++){
@@ -29,26 +28,46 @@ public class Hangman {
 	
 	
 	// Method for checking user input
-	public static String getInputLetter(Scanner scanner) {
+	private static String getInputLetter(Scanner scanner, ArrayList<String> pastGuesses) {
 		System.out.print("Your guess: ");
         String inputLetter = scanner.nextLine().toUpperCase();
-        if (inputLetter.matches("[A-Z]+")) {
-            return inputLetter;
-        } else {
-        	// If input is not a letter, then throw exception
-            System.out.println("Invalid input. Please enter a single letter.");
-            throw new IllegalArgumentException("Non-alphabet input");
+        while ( true ) {
+	        if ( inputLetter.matches("[A-Z]+") && inputLetter.length() == 1) {
+	            break;
+	        } else {
+	        	// If input is not a letter, then throw exception
+	            System.out.println("Invalid input. Please enter a single letter.");
+	        }
         }
+        inputLetter = repeatGuess(inputLetter, pastGuesses);
+        return inputLetter;
 	}
 	
-	public static void main(String[] args) {
+	private static String repeatGuess(String inputLetter, ArrayList<String> pastGuesses) {
+		while ( true ) {
+			// Check if guess is repeated from before, else add to list of past guesses
+	        if ( pastGuesses.contains(inputLetter)) {
+	        	System.out.println("You have previously guessed " + inputLetter + ", please try again.");
+	        }
+	        else {
+	        	pastGuesses.add(inputLetter);
+	        	return inputLetter;
+	        }
+		}
+	}
+	private static String wordSelector() {
 		// Initializing array of words (string)
 		String[] wordList = { "PANCAKE", "UMBRELLA", "MUSICAL", "SAXOPHONE", "GIRAFFE", "UNIVERSE" };
 		
 		// Selecting a word using a random number
 		int selectedIndex = (int) (Math.random()*(wordList.length));
 		String selectedWord = wordList[selectedIndex];
-		
+		return selectedWord;
+	}
+	
+	public static void main(String[] args) {
+		// Initializing hangman word
+		String selectedWord = wordSelector();
 		
 		// Creating a display word that is shown 
 		String displayWord = "-".repeat(selectedWord.length());
@@ -60,11 +79,7 @@ public class Hangman {
 		System.out.println("Welcome to Hangman!");
 		
 		// Prompt user to input letter
-		Scanner scanner = new Scanner(System.in);
-		
-		// Initialize ArrayList to store past guesses
-		ArrayList<String> pastGuesses = new ArrayList<String>();
-		
+		Scanner scanner = new Scanner(System.in);		
 		while ( guesses > 0 ){ 
 			
 			// Print display word and number of guesses
@@ -75,23 +90,12 @@ public class Hangman {
 				System.out.println("You only have one guess left.");
 			else
 				System.out.println("You have " + guesses + " guesses left.");
+			// Initialize ArrayList to store past guesses
+			ArrayList<String> pastGuesses = new ArrayList<String>();
 			
 			// Get user input and pass it through error-checking
-			String inputLetter = getInputLetter(scanner);
-	        
-	        // If input contains more than one character, use first character
-	        if ( inputLetter.length() > 1) 
-	        	inputLetter = inputLetter.substring(0, 1);
-	        	       
-			// Check if guess is repeated from before, else add to list of past guesses
-	        if ( pastGuesses.contains(inputLetter)) {
-	        	System.out.println("You have previously guessed " + inputLetter + ", please try again.");
-	        	continue;
-	        }
-	        else {
-	        	pastGuesses.add(inputLetter);
-	        }
-	        
+			String inputLetter = getInputLetter(scanner, pastGuesses);
+			
 			// Use letterCheck method to loop through letters
 			String newDisplayWord = letterCheck(displayWord, selectedWord, inputLetter);
 		
@@ -122,8 +126,9 @@ public class Hangman {
 		}
 		// else, display defeat message:
 		else {
-			System.out.print("You're completely hung.");
-			System.out.print("The word was: " + selectedWord);
+			System.out.println("You're completely hung.");
+			System.out.println("You lose.");
+			System.out.println("The word was: " + selectedWord);
 			
 		}
 	}
